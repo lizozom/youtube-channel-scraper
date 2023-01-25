@@ -1,5 +1,8 @@
 
-def getAllVideos(youtube, playlistId):
+from datetime import datetime, timedelta
+
+
+def getAllVideosByPlaylistId(youtube, playlistId):
     # Fetch videos list
     allVids = []
     vidsCount = None
@@ -50,10 +53,11 @@ def getVideoInfo(youtube, video):
     return response["items"][0]
 
 def updateChannelStats(youtube, channel):
-    channelInfo = getChannelInfo(youtube, channel.channel_id)
-    channel.updateStats(channelInfo)
+    # Update channel stats if they are older than 30 days
+    if channel.stats_refreshed_at is not None and channel.stats_refreshed_at > datetime.now() - timedelta(days= 30):
+        channelInfo = getChannelInfo(youtube, channel.channel_id)
+        channel.updateStats(channelInfo)
 
 def getAllVideosByChannel(youtube, channel):
-    allVids = getAllVideos(youtube, channel.upload_playlist_id)
-    return allVids
+    return getAllVideosByPlaylistId(youtube, channel.upload_playlist_id)
 

@@ -1,12 +1,14 @@
 from channel_scraper import ChannelScraper
 from consts import CHANNEL_NAMES
 from db.video import YouTubeChannel
-from video_list import searchChannels, updateChannelStats
+from youtube_api import searchChannels, updateChannelStats
 from youtube import init
+
+from dotenv import load_dotenv
+load_dotenv()
 
 def main():
     youtube = init()
-    # youtube = initOauth()
 
     for query in CHANNEL_NAMES:
         if  YouTubeChannel \
