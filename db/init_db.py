@@ -1,6 +1,6 @@
 from peewee import *
 from consts import DB_NAME
-from video import YouTubeChannel, YouTubeVideo
+from db.models import YouTubeChannel, YouTubeVideo
  
 db = SqliteDatabase(DB_NAME)
 db.connect()

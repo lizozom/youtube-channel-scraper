@@ -1,10 +1,9 @@
 from channel_scraper import ChannelScraper
 from consts import CHANNEL_NAMES
-from db.video import YouTubeChannel
-from youtube_api import searchChannels, updateChannelStats
-from youtube import init
-
+from db import YouTubeChannel
+from youtube_api import init, searchChannels, updateChannelStats
 from dotenv import load_dotenv
+
 load_dotenv()
 
 def scrape_channel_metadata(channel_names):

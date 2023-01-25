@@ -10,7 +10,6 @@ def init():
 
     api_service_name = "youtube"
     api_version = "v3"
-    # DEVELOPER_KEY = "AIzaSyAjwrlIlQlPbwO_r7iiQRT3vV_BFXQmT68" #lizozom
     DEVELOPER_KEY = os.environ.get("YOUTUBE_API_KEY")
 
     youtube = googleapiclient.discovery.build(

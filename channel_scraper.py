@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from db.video import YouTubeVideo
+from db import YouTubeVideo
 from youtube_api import getAllVideosByChannel, getVideoInfo
 
 class ChannelScraper:
