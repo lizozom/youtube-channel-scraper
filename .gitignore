@@ -1,0 +1,10 @@
+.vscode
+__pycache__
+auth
+env/
+output
+.env
+captions/captions.log
+captions/geckodriver.log
+channel_specific
+youtube.db
