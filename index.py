@@ -7,10 +7,10 @@ from youtube import init
 from dotenv import load_dotenv
 load_dotenv()
 
-def main():
+def scrape_channel_metadata(channel_names):
     youtube = init()
 
-    for query in CHANNEL_NAMES:
+    for query in channel_names:
         if  YouTubeChannel \
             .select() \
             .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True).count() == 0:
@@ -29,7 +29,11 @@ def main():
                 youtube, 
                 channel,
             )
-            scraper.process()
+            scraper.scrape()
+
+
+def main():
+    scrape_channel_metadata(CHANNEL_NAMES)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ class ChannelScraper:
         self.channel = channel
         self.output_folder = "output/%s/%s-%s/" % (self.channel.search_query, self.channel.title, self.channel.channel_id)
 
-    def process(self):
+    def scrape(self):
         self.get_channel_videos()
         self.update_video_stats()
 
