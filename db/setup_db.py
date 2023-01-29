@@ -7,3 +7,5 @@ db.connect()
 
 # Create the tables.
 db.create_tables([YouTubeChannel, YouTubeVideo])
+
+print("Done setting up the database.")

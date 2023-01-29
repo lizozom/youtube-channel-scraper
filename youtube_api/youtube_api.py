@@ -1,13 +1,15 @@
 
 from datetime import datetime, timedelta
 
-
 def getAllVideosByPlaylistId(youtube, playlistId):
     # Fetch videos list
     allVids = []
     vidsCount = None
     nextToken = ""
     while (vidsCount is None or len(allVids) < vidsCount):
+        if playlistId is None:
+            print("Skipping playlist (no playlist ID)")
+            return []
 
         videosReq = youtube.playlistItems().list(
             part="contentDetails,id,snippet,status",

@@ -66,7 +66,6 @@ class YouTubeVideo(Model):
     duration = IntegerField(null=True)
     view_count = IntegerField(null=True)
     like_count = IntegerField(null=True)
-    dislike_count = IntegerField(null=True)
     favorite_count = IntegerField(null=True)
     comment_count = IntegerField(null=True)
 
@@ -90,6 +89,32 @@ class YouTubeVideo(Model):
             status=status["privacyStatus"],
         )
 
+    def toElastic(self):
+        return {    
+            "@timestamp": datetime.now(),
+            "video_id": self.video_id,
+            "video_title": self.title,
+            "video_description": self.description,
+            "video_thumbnail": self.thumbnail,
+            "video_status": self.status,
+            "video_published_at": self.published_at,
+            "video_published_day_of_week": datetime.fromisoformat(self.published_at.replace("Z", "+00:00")).strftime("%A"),
+            "video_duration": self.duration,
+            "video_view_count": self.view_count,
+            "video_like_count": self.like_count,
+            "video_favorite_count": self.favorite_count,
+            "video_comment_count": self.comment_count,
+            "video_tags": self.tags.split(",") if self.tags else [],
+            "channel_id": self.channel_id,
+            "channel_title": self.channel_title,
+            "channel_description": self.channel.description,
+            "channel_thumbnail": self.channel.thumbnail,
+            "channel_subscriber_count": self.channel.subscriber_count,
+            "channel_view_count": self.channel.view_count,
+            "channel_video_count": self.channel.video_count,
+            "channel_published_at": self.channel.published_at
+        }
+
     def updateStats(self, videoInfo):
         statistics = videoInfo["statistics"]
         try:
@@ -102,8 +127,6 @@ class YouTubeVideo(Model):
         except:
             pass
 
-        # Not supported by API
-        # self.dislike_count = statistics["dislikeCount"]
         try:
             self.favorite_count = statistics["favoriteCount"]
         except:

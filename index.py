@@ -2,12 +2,14 @@ from channel_scraper import ChannelScraper
 from consts import CHANNEL_NAMES
 from db import YouTubeChannel
 from youtube_api import init, searchChannels, updateChannelStats
+from elastic import init as initElastic
 from dotenv import load_dotenv
 
 load_dotenv()
 
 def scrape_channel_metadata(channel_names):
     youtube = init()
+    es = initElastic()
 
     for query in channel_names:
         if  YouTubeChannel \
@@ -26,9 +28,11 @@ def scrape_channel_metadata(channel_names):
             updateChannelStats(youtube, channel)        
             scraper = ChannelScraper(
                 youtube, 
+                es,
                 channel,
             )
             scraper.scrape()
+
 
 
 def main():

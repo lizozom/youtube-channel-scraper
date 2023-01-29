@@ -8,3 +8,4 @@ captions/captions.log
 captions/geckodriver.log
 channel_specific
 youtube.db
+elastic.ini

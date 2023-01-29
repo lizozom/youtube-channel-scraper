@@ -1,0 +1,95 @@
+{
+    "dynamic": "true",
+    "_source": {
+        "enabled": "true"
+    },
+    "properties": {
+        "@timestamp": {
+            "type": "date"
+        },
+        "video_id": {
+            "type": "keyword"
+        },
+        "video_title": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 512
+                }
+            }
+        },
+        "video_description": {
+            "type": "text"
+        },
+        "video_thumbnail": {
+            "type": "text"
+        },
+        "video_status": {
+            "type": "keyword"
+        },
+        "video_published_at": {
+            "type": "date"
+        },
+        "video_published_day_of_week": {
+            "type": "keyword"
+        },
+        "video_duration": {
+            "type": "integer"
+        },
+        "video_view_count": {
+            "type": "long"
+        },
+        "video_like_count": {
+            "type": "long"
+        },
+        "video_favorite_count": {
+            "type": "long"
+        },
+        "video_comment_count": {
+            "type": "long"
+        },
+        "video_country": {
+            "type": "keyword"
+        },
+        "video_language": {
+            "type": "keyword"
+        },
+        "video_tags": {
+            "type": "keyword"
+        },
+        "video_category": {
+            "type": "keyword"
+        },
+        "channel_id": {
+            "type": "keyword"
+        },
+        "channel_title": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 512
+                }
+            }
+        },
+        "channel_description": {
+            "type": "text"
+        },
+        "channel_thumbnail": {
+            "type": "text"
+        },
+        "channel_subscriber_count": {
+            "type": "long"
+        },
+        "channel_view_count": {
+            "type": "long"
+        },
+        "channel_video_count": {
+            "type": "long"
+        },
+        "channel_published_at": {
+            "type": "date"
+        }
+    }
+}
