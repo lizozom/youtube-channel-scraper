@@ -38,7 +38,7 @@ def scrape_channel_metadata(channel_names):
             scraper.scrape()
 
 
-def scrape_channel_subtitles(channel_names):
+def scrape_channel_subtitles(channel_names, video_ids=[]):
     driver = setup_driver()
     es = initElastic()
 
@@ -48,6 +48,8 @@ def scrape_channel_subtitles(channel_names):
             .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True)
         for channel in channels:
             videos = channel.videos.order_by(YouTubeVideo.published_at.asc())
+            if video_ids:
+                videos = videos.where(YouTubeVideo.video_id << video_ids)
             for video in videos:
                 print(video)
                 captions = scrape_video_captions(driver, video)
@@ -61,15 +63,17 @@ def scrape_channel_subtitles(channel_names):
 def main():
     parser = argparse.ArgumentParser("youtube_scraper")
     parser.add_argument("command", help="Command to run (fetch, captions)")
-    parser.add_argument("--channels", help="Channels to scrape", action='append')
+    parser.add_argument("--channel", help="Channels to scrape", action='append')
+    parser.add_argument("--video", help="Videos to scrape", action='append')
     args = parser.parse_args()
 
-    channels = args.channels if args.channels else CHANNEL_NAMES
+    channels = args.channel if args.channel else CHANNEL_NAMES
+    video_ids = args.video if args.video else []
 
     if args.command == "fetch":
         scrape_channel_metadata(channels)
     elif args.command == "captions":
-        scrape_channel_subtitles(channels)
+        scrape_channel_subtitles(channels, video_ids)
     else:
         print(args)
         print("Unknown command")
