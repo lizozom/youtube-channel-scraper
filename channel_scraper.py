@@ -13,8 +13,16 @@ class ChannelScraper:
     def scrape(self):
         self.get_channel_videos()
 
+        
         # Only update videos that were not updated for more than 30 days
-        videosToUpdateStats = YouTubeVideo.select().where(YouTubeVideo.stats_refreshed_at < datetime.now() - timedelta(days=30))
+        videosToUpdateStats = YouTubeVideo.select().where(
+            (YouTubeVideo.channel_title == self.channel.title) & (
+            (
+                (YouTubeVideo.stats_refreshed_at.is_null()) |
+                (YouTubeVideo.stats_refreshed_at < datetime.now() - timedelta(days=30))
+            ))
+        )
+
         self.update_video_stats(videosToUpdateStats)
         self.update_elastic(videosToUpdateStats)
 
@@ -32,12 +40,12 @@ class ChannelScraper:
                 YouTubeVideo.fromYouTubeAPI(video)
 
     def update_video_stats(self, videos):
-        print('Updating stats for videos for %s from API' % self.channel.title)
+        print('Updating stats for videos %d for %s from API' % (len(videos), self.channel.title))
         for video in videos:
             videoStats = getVideoInfo(self.youtube, video.video_id)
             video.updateStats(videoStats)
             video.save()
 
     def update_elastic(self, videos):
-        print('Updating ES for videos for %s' % self.channel.title)
+        print('Updating ES for %d videos for %s' % (len(videos), self.channel.title))
         bulk_index_videos(self.es, videos)

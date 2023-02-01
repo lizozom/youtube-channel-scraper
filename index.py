@@ -29,7 +29,7 @@ def scrape_channel_metadata(channel_names):
             .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True))
 
         for channel in savedChannelList:
-            updateChannelStats(youtube, channel)        
+            updateChannelStats(youtube, channel)
             scraper = ChannelScraper(
                 youtube, 
                 es,
