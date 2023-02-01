@@ -17,6 +17,15 @@ def init():
 
     return es
 
+def update_video_captions(es, video, captions):
+    es.update(index=ELASTIC_VIDEO_INDEX_NAME, id=video.video_id, body={
+        "doc": {
+            "video_transcript": captions['text'],
+            "video_transcript_word_count": captions['duration'],
+            "video_transcript_duration": captions['wordCount'],
+        },
+    })
+
 def bulk_index_videos(es, videos):
     bulk_data = []
     for i, video in enumerate(videos):

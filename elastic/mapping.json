@@ -90,6 +90,15 @@
         },
         "channel_published_at": {
             "type": "date"
+        },
+        "video_transcript": {
+            "type": "text"
+        },
+        "video_transcript_word_count": {
+            "type": "integer"
+        },
+        "video_transcript_duration": {
+            "type": "integer"
         }
     }
 }

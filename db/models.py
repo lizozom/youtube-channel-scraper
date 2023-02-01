@@ -91,6 +91,7 @@ class YouTubeVideo(Model):
         )
 
     def toElastic(self):
+        publishTime = getDatetime(self.published_at)
         return {    
             "@timestamp": datetime.now(),
             "video_id": self.video_id,
@@ -99,7 +100,7 @@ class YouTubeVideo(Model):
             "video_thumbnail": self.thumbnail,
             "video_status": self.status,
             "video_published_at": self.published_at,
-            "video_published_day_of_week": getDatetime(self.published_at).strftime("%A"),
+            "video_published_day_of_week": publishTime.strftime("%A") if publishTime else None,
             "video_duration": self.duration,
             "video_view_count": self.view_count,
             "video_like_count": self.like_count,
