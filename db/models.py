@@ -2,6 +2,7 @@ import isodate
 from datetime import datetime
 from peewee import *
 from consts import DB_NAME
+from utils import getDatetime
 
 db = SqliteDatabase(DB_NAME)
 
@@ -98,7 +99,7 @@ class YouTubeVideo(Model):
             "video_thumbnail": self.thumbnail,
             "video_status": self.status,
             "video_published_at": self.published_at,
-            "video_published_day_of_week": datetime.fromisoformat(self.published_at.replace("Z", "+00:00")).strftime("%A"),
+            "video_published_day_of_week": getDatetime(self.published_at).strftime("%A"),
             "video_duration": self.duration,
             "video_view_count": self.view_count,
             "video_like_count": self.like_count,

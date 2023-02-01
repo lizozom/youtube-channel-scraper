@@ -12,33 +12,32 @@ class ChannelScraper:
 
     def scrape(self):
         self.get_channel_videos()
-        self.update_video_stats()
-        self.update_elastic()
+
+        # Only update videos that were not updated for more than 30 days
+        videosToUpdateStats = YouTubeVideo.select().where(YouTubeVideo.stats_refreshed_at < datetime.now() - timedelta(days=30))
+        self.update_video_stats(videosToUpdateStats)
+        self.update_elastic(videosToUpdateStats)
 
     def get_channel_videos(self):
-        self.videos = YouTubeVideo.select().where(YouTubeVideo.channel_id == self.channel.channel_id)
+        allSavedVideos = YouTubeVideo.select().where(YouTubeVideo.channel_id == self.channel.channel_id)
 
-        if self.videos.count() > 0:
-            print('Loaded all videos for %s from DB' % self.channel.title)
-            return
-
-        print('Loading all videos for %s from API' % self.channel.title)
-        uploadPlayListItems = getAllVideosByChannel(self.youtube, self.channel)
-        for video in uploadPlayListItems:
-            YouTubeVideo.fromYouTubeAPI(video)
+        isNewChannel = allSavedVideos.count() == 0
+        fetchVideosMaxAge = None if isNewChannel else timedelta(days=30)
         
-        self.videos = YouTubeVideo.select().where(YouTubeVideo.channel_id == self.channel.channel_id)
+        print('Checking for new videos for %s from API' % self.channel.title)
+        uploadPlayListItems = getAllVideosByChannel(self.youtube, self.channel, fetchVideosMaxAge)
+        for i, video in enumerate(uploadPlayListItems):
+            if allSavedVideos.filter(YouTubeVideo.video_id == video["contentDetails"]['videoId']).count() == 0:
+                print('😀 %s: New videos found %s (index %d)' % (self.channel.title, video['snippet']['title'], i))
+                YouTubeVideo.fromYouTubeAPI(video)
 
-    def update_video_stats(self):
+    def update_video_stats(self, videos):
         print('Updating stats for videos for %s from API' % self.channel.title)
-        for video in self.videos:
-            # Only update videos that were not updated for more than 30 days
-            # if video.stats_refreshed_at is not None and video.stats_refreshed_at > datetime.now() - timedelta(days= 30):
-            #     continue
+        for video in videos:
             videoStats = getVideoInfo(self.youtube, video.video_id)
             video.updateStats(videoStats)
             video.save()
 
-    def update_elastic(self):
+    def update_elastic(self, videos):
         print('Updating ES for videos for %s' % self.channel.title)
-        bulk_index_videos(self.es, self.videos)
+        bulk_index_videos(self.es, videos)

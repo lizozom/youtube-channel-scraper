@@ -20,8 +20,6 @@ def init():
 def bulk_index_videos(es, videos):
     bulk_data = []
     for i, video in enumerate(videos):
-        # if video.stats_refreshed_at is not None and video.stats_refreshed_at > datetime.now() - timedelta(days= 30):
-        #     continue
         bulk_data.append({
             "index": {
                 "_id": video.video_id,

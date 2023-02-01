@@ -1,12 +1,20 @@
 
 from datetime import datetime, timedelta
+from dateutil import parser
+import pytz
 
-def getAllVideosByPlaylistId(youtube, playlistId):
+from utils import getDatetime
+
+def getAllVideosByPlaylistId(youtube, playlistId, maxAge=None):
     # Fetch videos list
     allVids = []
     vidsCount = None
     nextToken = ""
-    while (vidsCount is None or len(allVids) < vidsCount):
+    maxAgeReached = False
+    while (
+        vidsCount is None or
+        len(allVids) < vidsCount and 
+        not maxAgeReached):
         if playlistId is None:
             print("Skipping playlist (no playlist ID)")
             return []
@@ -23,7 +31,11 @@ def getAllVideosByPlaylistId(youtube, playlistId):
         allVids.extend(videosRes["items"])
         if "nextPageToken" in videosRes:
             nextToken = videosRes["nextPageToken"]
-        print("Got %d videos" % len(allVids))
+
+        lastVideoDate = parser.parse(allVids[-1]["snippet"]["publishedAt"])
+        if maxAge is not None and lastVideoDate < datetime.now().replace(tzinfo=pytz.UTC) - maxAge:
+            maxAgeReached = True
+        print("Got %d videos (latest %s)" % (len(allVids), lastVideoDate))
 
     return allVids
 
@@ -54,12 +66,12 @@ def getVideoInfo(youtube, video):
     response = request.execute()
     return response["items"][0]
 
-def updateChannelStats(youtube, channel):
+def updateChannelStats(youtube, channel, maxAge=timedelta(days=30)):
     # Update channel stats if they are older than 30 days
-    if channel.stats_refreshed_at is not None and channel.stats_refreshed_at > datetime.now() - timedelta(days= 30):
+    if channel.stats_refreshed_at is not None and channel.stats_refreshed_at > datetime.now() - maxAge:
         channelInfo = getChannelInfo(youtube, channel.channel_id)
         channel.updateStats(channelInfo)
 
-def getAllVideosByChannel(youtube, channel):
-    return getAllVideosByPlaylistId(youtube, channel.upload_playlist_id)
+def getAllVideosByChannel(youtube, channel, maxAge=None):
+    return getAllVideosByPlaylistId(youtube, channel.upload_playlist_id, maxAge)
 
