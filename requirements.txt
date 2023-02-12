@@ -9,6 +9,8 @@ cffi==1.15.1
 charset-normalizer==2.1.1
 cryptography==38.0.4
 exceptiongroup==1.1.0
+elastic-transport==8.4.0
+elasticsearch==8.6.1
 google-api-core==2.11.0
 google-api-python-client==2.70.0
 google-auth==2.15.0
