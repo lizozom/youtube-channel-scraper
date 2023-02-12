@@ -1,6 +1,7 @@
 from time import sleep
 import json
 import random
+import os
 import os.path
 from seleniumwire import webdriver
 from seleniumwire.utils import decode
@@ -14,7 +15,7 @@ waittime = 15                                 # seconds browser waits before giv
 sleeptime = [5,15]                            # random seconds range before loading next video id
 headless = False                              # select True if you want the browser window to be invisible (but not inaudible)
 mute = True                                   # select True if you want the browser window to be muted
-adblock_path = '/home/lizozom/.config/google-chrome/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.15.2_0/'
+adblock_path = os.environ.get("ADBLOCK_PATH")
 
 def process_captions(captions_str):
     captions_json = json.loads(captions_str)
@@ -83,7 +84,8 @@ def get_transcript(driver, videoid):
 def setup_driver():
     #create driver
     options = Options()
-    options.add_argument('load-extension=' + adblock_path)
+    if adblock_path:
+        options.add_argument('load-extension=' + adblock_path)
     if mute:
         options.add_argument("--mute-audio")
 

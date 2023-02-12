@@ -38,14 +38,14 @@ def scrape_channel_metadata(channel_names):
             scraper.scrape()
 
 
-def scrape_channel_subtitles(channel_names, video_ids=[]):
+def scrape_channel_subtitles(channel_names, video_ids=None):
     driver = setup_driver()
     es = initElastic()
 
     for query in channel_names:
         channels = YouTubeChannel \
             .select() \
-            .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True)
+            .where(YouTubeChannel.title == query)
         for channel in channels:
             videos = channel.videos.order_by(YouTubeVideo.published_at.asc())
             if video_ids:
@@ -68,7 +68,7 @@ def main():
     args = parser.parse_args()
 
     channels = args.channel if args.channel else CHANNEL_NAMES
-    video_ids = args.video if args.video else []
+    video_ids = args.video if args.video else None
 
     if args.command == "fetch":
         scrape_channel_metadata(channels)
