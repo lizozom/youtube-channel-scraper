@@ -1,10 +1,11 @@
-import isodate
 from datetime import datetime
+import isodate
 from peewee import *
 from consts import DB_NAME
 from utils import getDatetime
 
 db = SqliteDatabase(DB_NAME)
+
 
 class YouTubeChannel(Model):
     channel_id = CharField(primary_key=True)
@@ -25,7 +26,7 @@ class YouTubeChannel(Model):
         database = db
 
     def getUrl(self):
-        return "https://www.youtube.com/channel/%s" % self.channel_id
+        return f"https://www.youtube.com/channel/{self.channel_id}"
 
     @staticmethod
     def fromYouTubeAPI(channelSnippet, searchQuery):
@@ -49,7 +50,7 @@ class YouTubeChannel(Model):
         self.upload_playlist_id = contentDetails["relatedPlaylists"]["uploads"]
 
         self.save()
-        
+
 
 class YouTubeVideo(Model):
     video_id = CharField(primary_key=True)
@@ -92,7 +93,7 @@ class YouTubeVideo(Model):
 
     def toElastic(self):
         publishTime = getDatetime(self.published_at)
-        return {    
+        return {
             "@timestamp": datetime.now(),
             "video_id": self.video_id,
             "video_title": self.title,
@@ -123,28 +124,26 @@ class YouTubeVideo(Model):
             self.view_count = statistics["viewCount"]
         except Exception:
             pass
-        
+
         try:
             self.like_count = statistics["likeCount"]
         except Exception:
             pass
-
         try:
             self.favorite_count = statistics["favoriteCount"]
         except Exception:
-            pass    
-
+            pass
         try:
             self.comment_count = statistics["commentCount"]
-        except Exception:    
+        except Exception:
             pass
-
         status = videoInfo["status"]
         self.status = status["privacyStatus"]
 
         contentDetails = videoInfo["contentDetails"]
         self.durationStr = contentDetails["duration"]
-        self.duration = isodate.parse_duration(contentDetails["duration"]).total_seconds()
+        self.duration = isodate.parse_duration(
+            contentDetails["duration"]).total_seconds()
 
         try:
             tags = videoInfo["snippet"]["tags"]
@@ -154,4 +153,3 @@ class YouTubeVideo(Model):
 
         self.stats_refreshed_at = datetime.now()
         self.save()
-        

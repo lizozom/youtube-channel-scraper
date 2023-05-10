@@ -1,3 +1,5 @@
+import argparse
+from dotenv import load_dotenv
 from captions.scrape_captions import setup_driver, scrape_video_captions
 from channel_scraper import ChannelScraper
 from consts import CHANNEL_NAMES
@@ -6,32 +8,31 @@ from db.models import YouTubeVideo
 from elastic.elastic import update_video_captions
 from youtube_api import init, searchChannels, updateChannelStats
 from elastic import init as initElastic
-from dotenv import load_dotenv
-import argparse
 
 load_dotenv()
+
 
 def scrape_channel_metadata(channel_names):
     youtube = init()
     es = initElastic()
 
     for query in channel_names:
-        if  YouTubeChannel \
+        if YouTubeChannel \
             .select() \
-            .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True).count() == 0:
+                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True).count() == 0:
             # Load channel info from YouTube API
             channelList = searchChannels(youtube, query)
             for channel in channelList:
                 YouTubeChannel.fromYouTubeAPI(channel["snippet"], query)
-        
-        savedChannelList = list(YouTubeChannel \
-            .select() \
-            .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True))
+
+        savedChannelList = list(YouTubeChannel
+                                .select()
+                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True))
 
         for channel in savedChannelList:
             updateChannelStats(youtube, channel)
             scraper = ChannelScraper(
-                youtube, 
+                youtube,
                 es,
                 channel,
             )
@@ -54,16 +55,18 @@ def scrape_channel_subtitles(channel_names, video_ids=None):
                 print(video)
                 captions = scrape_video_captions(driver, video)
                 print(captions)
-                if ('msg' in captions):
+                if 'msg' in captions:
                     print(captions['msg'])
                     continue
                 update_video_captions(es, video, captions)
-                print("Updated captions for video %s" % video.video_id)
+                print(f"Updated captions for video {video.video_id}")
+
 
 def main():
     parser = argparse.ArgumentParser("youtube_scraper")
     parser.add_argument("command", help="Command to run (fetch, captions)")
-    parser.add_argument("--channel", help="Channels to scrape", action='append')
+    parser.add_argument(
+        "--channel", help="Channels to scrape", action='append')
     parser.add_argument("--video", help="Videos to scrape", action='append')
     args = parser.parse_args()
 
@@ -83,6 +86,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-

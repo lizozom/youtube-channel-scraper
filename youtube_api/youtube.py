@@ -3,7 +3,7 @@ import googleapiclient.discovery
 import googleapiclient.errors
 
 
-def init(): 
+def init():
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -13,5 +13,5 @@ def init():
     DEVELOPER_KEY = os.environ.get("YOUTUBE_API_KEY")
 
     youtube = googleapiclient.discovery.build(
-        api_service_name, api_version, developerKey = DEVELOPER_KEY)
+        api_service_name, api_version, developerKey=DEVELOPER_KEY)
     return youtube

@@ -13,7 +13,7 @@ def getAllVideosByPlaylistId(youtube, playlistId, maxAge=None):
     maxAgeReached = False
     while (
         vidsCount is None or
-        len(allVids) < vidsCount and 
+        len(allVids) < vidsCount and
         not maxAgeReached):
         if playlistId is None:
             print("Skipping playlist (no playlist ID)")
@@ -74,4 +74,3 @@ def updateChannelStats(youtube, channel, maxAge=timedelta(days=30)):
 
 def getAllVideosByChannel(youtube, channel, maxAge=None):
     return getAllVideosByPlaylistId(youtube, channel.upload_playlist_id, maxAge)
-

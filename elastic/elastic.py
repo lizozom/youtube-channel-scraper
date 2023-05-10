@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
-from elasticsearch import Elasticsearch, helpers
 import configparser
+from elasticsearch import Elasticsearch
 
 config = configparser.ConfigParser()
 config.read('elastic.ini')
