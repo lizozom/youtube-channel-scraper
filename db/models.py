@@ -31,12 +31,14 @@ class YouTubeChannel(Model):
     @staticmethod
     def fromYouTubeAPI(channelSnippet, searchQuery):
         return YouTubeChannel.get_or_create(
-            search_query=searchQuery,
             channel_id=channelSnippet["channelId"],
-            title=channelSnippet["title"],
-            description=channelSnippet["description"],
-            thumbnail=channelSnippet["thumbnails"]["default"]["url"],
-            published_at=channelSnippet["publishedAt"],
+            defaults={
+                "search_query": searchQuery,
+                "title": channelSnippet["title"],
+                "description": channelSnippet["description"],
+                "thumbnail": channelSnippet["thumbnails"]["default"]["url"],
+                "published_at": channelSnippet["publishedAt"]
+            }
         )
 
     def updateStats(self, channelInfo):

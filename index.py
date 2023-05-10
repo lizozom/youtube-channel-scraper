@@ -19,16 +19,18 @@ def scrape_channel_metadata(channel_names):
     for query in channel_names:
         if YouTubeChannel \
             .select() \
-                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True).count() == 0:
+                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True).count() == 0:
             # Load channel info from YouTube API
             channelList = searchChannels(youtube, query)
             for channel in channelList:
-                YouTubeChannel.fromYouTubeAPI(channel["snippet"], query)
+                try:
+                    YouTubeChannel.fromYouTubeAPI(channel["snippet"], query)
+                except Exception as e:
+                    print(e)
 
         savedChannelList = list(YouTubeChannel
                                 .select()
-                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True))
-
+                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True))
         for channel in savedChannelList:
             updateChannelStats(youtube, channel)
             scraper = ChannelScraper(
