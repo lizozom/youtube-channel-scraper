@@ -121,22 +121,22 @@ class YouTubeVideo(Model):
         statistics = videoInfo["statistics"]
         try:
             self.view_count = statistics["viewCount"]
-        except:
+        except Exception:
             pass
         
         try:
             self.like_count = statistics["likeCount"]
-        except:
+        except Exception:
             pass
 
         try:
             self.favorite_count = statistics["favoriteCount"]
-        except:
+        except Exception:
             pass    
 
         try:
             self.comment_count = statistics["commentCount"]
-        except:    
+        except Exception:    
             pass
 
         status = videoInfo["status"]
@@ -149,7 +149,7 @@ class YouTubeVideo(Model):
         try:
             tags = videoInfo["snippet"]["tags"]
             self.tags = ",".join(tags)
-        except:
+        except Exception:
             pass
 
         self.stats_refreshed_at = datetime.now()

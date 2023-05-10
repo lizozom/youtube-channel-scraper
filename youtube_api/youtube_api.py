@@ -64,11 +64,11 @@ def getVideoInfo(youtube, video):
         id=video
     )
     response = request.execute()
-    return response["items"][0]
+    return response["items"][0] if len(response["items"]) > 0 else None
 
 def updateChannelStats(youtube, channel, maxAge=timedelta(days=30)):
     # Update channel stats if they are older than 30 days
-    if channel.stats_refreshed_at is not None and channel.stats_refreshed_at > datetime.now() - maxAge:
+    if (channel.stats_refreshed_at is not None and channel.stats_refreshed_at > datetime.now() - maxAge) or channel.upload_playlist_id is None:
         channelInfo = getChannelInfo(youtube, channel.channel_id)
         channel.updateStats(channelInfo)
 

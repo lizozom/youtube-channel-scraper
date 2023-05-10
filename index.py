@@ -74,6 +74,8 @@ def main():
         scrape_channel_metadata(channels)
     elif args.command == "captions":
         scrape_channel_subtitles(channels, video_ids)
+    elif args.command == "download":
+        scrape_channel_subtitles(channels, video_ids)
     else:
         print(args)
         print("Unknown command")

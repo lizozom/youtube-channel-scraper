@@ -9,3 +9,4 @@ captions/geckodriver.log
 channel_specific
 youtube.db
 elastic.ini
+elastic/backup

@@ -29,12 +29,20 @@ def update_video_captions(es, video, captions):
 def bulk_index_videos(es, videos):
     bulk_data = []
     for i, video in enumerate(videos):
-        bulk_data.append({
-            "index": {
-                "_id": video.video_id,
-            }
-        })
-        bulk_data.append(video.toElastic())
+        if isinstance(video, dict):
+            bulk_data.append({
+                "index": {
+                    "_id": video["video_id"],
+                }
+            })
+            bulk_data.append(video)
+        else:
+            bulk_data.append({
+                "index": {
+                    "_id": video.video_id,
+                }
+            })
+            bulk_data.append(video.toElastic())
 
         if len(bulk_data) == 200 or i == len(videos) - 1:
             res = es.bulk(index=ELASTIC_VIDEO_INDEX_NAME, operations=bulk_data)

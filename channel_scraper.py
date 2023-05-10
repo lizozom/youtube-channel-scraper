@@ -43,8 +43,11 @@ class ChannelScraper:
         print('Updating stats for videos %d for %s from API' % (len(videos), self.channel.title))
         for video in videos:
             videoStats = getVideoInfo(self.youtube, video.video_id)
-            video.updateStats(videoStats)
-            video.save()
+            if (videoStats): 
+                video.updateStats(videoStats)
+                video.save()
+            else:
+                print('😡 %s: Failed to update stats for video %s' % (self.channel.title, video.video_id))
 
     def update_elastic(self, videos):
         print('Updating ES for %d videos for %s' % (len(videos), self.channel.title))
