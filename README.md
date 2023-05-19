@@ -27,3 +27,7 @@ To fetch all video captions, you must specify either a channel name or a video i
 
 `python index.py fetch --channel 'Guga Foods'`
 `python index.py fetch --video xOzGa4al4Ag`
+
+## Run maintenance scripts
+
+`python -m elastic.setup_elastic`
