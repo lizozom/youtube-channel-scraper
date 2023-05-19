@@ -1,4 +1,4 @@
 from datetime import datetime
 
-def getDatetime(timestr):
+def get_datetime(timestr):
     return datetime.fromisoformat(timestr.replace("Z", "+00:00"))

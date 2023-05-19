@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from db import YouTubeVideo
 from elastic import bulk_index_videos
-from youtube_api import getAllVideosByChannel, get_video_info
+from youtube_api import get_all_videos_by_channel, get_video_info
 
 
 class ChannelScraper:
@@ -36,7 +36,7 @@ class ChannelScraper:
         fetch_videos_max_age = None if is_new_channel else timedelta(days=30)
 
         print(f'Checking for new videos for {self.channel.title} from API')
-        upload_playlist_items = getAllVideosByChannel(
+        upload_playlist_items = get_all_videos_by_channel(
             self.youtube, self.channel, fetch_videos_max_age)
         for i, video in enumerate(upload_playlist_items):
             if all_saved_videos.filter(YouTubeVideo.video_id == video["contentDetails"]['videoId']).count() == 0:

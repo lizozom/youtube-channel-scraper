@@ -2,7 +2,7 @@ from datetime import datetime
 import isodate
 from peewee import CharField, ForeignKeyField, IntegerField, BooleanField, Model, SqliteDatabase, DateTimeField
 from consts import DB_NAME
-from utils import getDatetime
+from utils import get_datetime
 
 db = SqliteDatabase(DB_NAME)
 
@@ -94,7 +94,7 @@ class YouTubeVideo(Model):
         )
 
     def to_elastic(self):
-        publish_time = getDatetime(self.published_at)
+        publish_time = get_datetime(self.published_at)
         return {
             "@timestamp": datetime.now(),
             "video_id": self.video_id,

@@ -6,7 +6,7 @@ from consts import CHANNEL_NAMES
 from db import YouTubeChannel
 from db.models import YouTubeVideo
 from elastic.elastic import update_video_captions, init as init_elastic
-from youtube_api import init, searchChannels, update_channel_stats
+from youtube_api import init, search_channels, update_channel_stats
 
 load_dotenv()
 
@@ -19,7 +19,7 @@ def scrape_channel_metadata(channel_names):
             .select() \
                 .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True).count() == 0:
             # Load channel info from YouTube API
-            channel_list = searchChannels(youtube, query)
+            channel_list = search_channels(youtube, query)
             for channel in channel_list:
                 try:
                     YouTubeChannel.from_youtube_api(channel["snippet"], query)
