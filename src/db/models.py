@@ -1,8 +1,8 @@
 from datetime import datetime
 import isodate
 from peewee import CharField, ForeignKeyField, IntegerField, BooleanField, Model, SqliteDatabase, DateTimeField
-from consts import DB_NAME
-from utils import get_datetime
+from src.consts import DB_NAME
+from src.utils import get_datetime
 
 db = SqliteDatabase(DB_NAME)
 

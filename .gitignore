@@ -3,9 +3,9 @@ auth
 env/
 output
 .env
-captions/captions.log
-captions/geckodriver.log
-channel_specific
+src/captions/captions.log
+src/captions/geckodriver.log
+src/youtube_api/channel_specific
 youtube.db
 elastic.ini
-elastic/backup
+src/elastic/backup

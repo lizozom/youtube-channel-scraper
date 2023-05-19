@@ -1,12 +1,12 @@
 import argparse
 from dotenv import load_dotenv
-from captions.scrape_captions import setup_driver, scrape_video_captions
-from channel_scraper import ChannelScraper
-from consts import CHANNEL_NAMES
-from db import YouTubeChannel
-from db.models import YouTubeVideo
-from elastic.elastic import update_video_captions, init as init_elastic
-from youtube_api import init, search_channels, update_channel_stats
+from src.captions.scrape_captions import setup_driver, scrape_video_captions
+from src.channel_scraper import ChannelScraper
+from src.consts import CHANNEL_NAMES
+from src.db import YouTubeChannel
+from src.db.models import YouTubeVideo
+from src.elastic.elastic import update_video_captions, init as init_elastic
+from src.youtube_api import init, search_channels, update_channel_stats
 
 load_dotenv()
 

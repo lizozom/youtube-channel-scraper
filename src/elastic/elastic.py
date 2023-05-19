@@ -2,7 +2,7 @@ import configparser
 from elasticsearch import Elasticsearch
 
 config = configparser.ConfigParser()
-config.read('elastic.ini')
+config.read('auth/elastic.ini')
 
 ELASTIC_VIDEO_INDEX_NAME = 'youtube_videos'
 

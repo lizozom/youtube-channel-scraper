@@ -5,7 +5,7 @@ import re
 from db.models import YouTubeVideo
 from elastic import init, ELASTIC_VIDEO_INDEX_NAME, bulk_index_videos
 
-ELASTIC_VIDEO_BACKUP_PATH = './elastic/backup/videos'
+ELASTIC_VIDEO_BACKUP_PATH = './output/backup/videos'
 OUTPUT_PATH = './output'
 
 
