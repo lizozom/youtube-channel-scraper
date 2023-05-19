@@ -10,6 +10,9 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from dotenv import load_dotenv
+
+load_dotenv()
 
 waittime = 15                                 # seconds browser waits before giving up
 sleeptime = [5,15]                            # random seconds range before loading next video id
@@ -84,6 +87,7 @@ def get_transcript(driver, videoid):
 def setup_driver():
     #create driver
     options = Options()
+    print(adblock_path)
     if adblock_path:
         options.add_argument('load-extension=' + adblock_path)
     if mute:

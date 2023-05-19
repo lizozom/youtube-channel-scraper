@@ -5,9 +5,8 @@ from channel_scraper import ChannelScraper
 from consts import CHANNEL_NAMES
 from db import YouTubeChannel
 from db.models import YouTubeVideo
-from elastic.elastic import update_video_captions
+from elastic.elastic import update_video_captions, init as initElastic
 from youtube_api import init, searchChannels, updateChannelStats
-from elastic import init as initElastic
 
 load_dotenv()
 
@@ -19,7 +18,7 @@ def scrape_channel_metadata(channel_names):
     for query in channel_names:
         if YouTubeChannel \
             .select() \
-                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True).count() == 0:
+                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True).count() == 0:
             # Load channel info from YouTube API
             channelList = searchChannels(youtube, query)
             for channel in channelList:
@@ -30,7 +29,7 @@ def scrape_channel_metadata(channel_names):
 
         savedChannelList = list(YouTubeChannel
                                 .select()
-                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True))
+                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True))
         for channel in savedChannelList:
             updateChannelStats(youtube, channel)
             scraper = ChannelScraper(
