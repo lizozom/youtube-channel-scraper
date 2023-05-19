@@ -3,7 +3,6 @@ from db import YouTubeVideo
 from elastic import bulk_index_videos
 from youtube_api import get_all_videos_by_channel, get_video_info
 
-
 class ChannelScraper:
     def __init__(self, youtube, es_client, channel):
         self.youtube = youtube

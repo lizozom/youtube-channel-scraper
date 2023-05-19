@@ -26,8 +26,8 @@
     "python.defaultInterpreterPath": "env/bin/python",
     // "python.venvPath": "./env/bin/python",
     "python.terminal.activateEnvironment": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": false,
     "python.linting.enabled": true,
     "python.linting.pylintArgs": [
         "--init-hook",

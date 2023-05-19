@@ -3,8 +3,6 @@ from datetime import datetime, timedelta
 from dateutil import parser
 import pytz
 
-from utils import get_datetime
-
 def get_all_videos_by_playlist_id(youtube, playlistId, maxAge=None):
     # Fetch videos list
     allVids = []
@@ -35,7 +33,7 @@ def get_all_videos_by_playlist_id(youtube, playlistId, maxAge=None):
         lastVideoDate = parser.parse(allVids[-1]["snippet"]["publishedAt"])
         if maxAge is not None and lastVideoDate < datetime.now().replace(tzinfo=pytz.UTC) - maxAge:
             maxAgeReached = True
-        print("Got %d videos (latest %s)" % (len(allVids), lastVideoDate))
+        print(f"Got {len(allVids)} videos (latest {lastVideoDate})")
 
     return allVids
 
