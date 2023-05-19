@@ -1,6 +1,6 @@
 from datetime import datetime
 import isodate
-from peewee import *
+from peewee import CharField, ForeignKeyField, IntegerField, BooleanField, Model, SqliteDatabase, DateTimeField
 from consts import DB_NAME
 from utils import getDatetime
 
@@ -25,31 +25,31 @@ class YouTubeChannel(Model):
     class Meta:
         database = db
 
-    def getUrl(self):
+    def get_url(self):
         return f"https://www.youtube.com/channel/{self.channel_id}"
 
     @staticmethod
-    def fromYouTubeAPI(channelSnippet, searchQuery):
+    def from_youtube_api(channel_snippet, search_query):
         return YouTubeChannel.get_or_create(
-            channel_id=channelSnippet["channelId"],
+            channel_id=channel_snippet["channelId"],
             defaults={
-                "search_query": searchQuery,
-                "title": channelSnippet["title"],
-                "description": channelSnippet["description"],
-                "thumbnail": channelSnippet["thumbnails"]["default"]["url"],
-                "published_at": channelSnippet["publishedAt"]
+                "search_query": search_query,
+                "title": channel_snippet["title"],
+                "description": channel_snippet["description"],
+                "thumbnail": channel_snippet["thumbnails"]["default"]["url"],
+                "published_at": channel_snippet["publishedAt"]
             }
         )
 
-    def updateStats(self, channelInfo):
-        statistics = channelInfo["statistics"]
+    def update_stats(self, channel_info):
+        statistics = channel_info["statistics"]
         self.view_count = statistics["viewCount"]
         self.subscriber_count = statistics["subscriberCount"]
         self.video_count = statistics["videoCount"]
         self.stats_refreshed_at = datetime.now()
 
-        contentDetails = channelInfo["contentDetails"]
-        self.upload_playlist_id = contentDetails["relatedPlaylists"]["uploads"]
+        content_details = channel_info["contentDetails"]
+        self.upload_playlist_id = content_details["relatedPlaylists"]["uploads"]
 
         self.save()
 
@@ -77,13 +77,13 @@ class YouTubeVideo(Model):
         database = db
 
     @staticmethod
-    def fromYouTubeAPI(playlistChannelInfo):
-        contentDetails = playlistChannelInfo["contentDetails"]
-        status = playlistChannelInfo["status"]
-        snippet = playlistChannelInfo["snippet"]
+    def from_youtube_api(playlist_channel_info):
+        content_details = playlist_channel_info["contentDetails"]
+        status = playlist_channel_info["status"]
+        snippet = playlist_channel_info["snippet"]
         return YouTubeVideo.get_or_create(
-            video_id=contentDetails["videoId"],
-            published_at=contentDetails["videoPublishedAt"],
+            video_id=content_details["videoId"],
+            published_at=content_details["videoPublishedAt"],
 
             title=snippet["title"],
             description=snippet["description"],
@@ -93,8 +93,8 @@ class YouTubeVideo(Model):
             status=status["privacyStatus"],
         )
 
-    def toElastic(self):
-        publishTime = getDatetime(self.published_at)
+    def to_elastic(self):
+        publish_time = getDatetime(self.published_at)
         return {
             "@timestamp": datetime.now(),
             "video_id": self.video_id,
@@ -103,7 +103,7 @@ class YouTubeVideo(Model):
             "video_thumbnail": self.thumbnail,
             "video_status": self.status,
             "video_published_at": self.published_at,
-            "video_published_day_of_week": publishTime.strftime("%A") if publishTime else None,
+            "video_published_day_of_week": publish_time.strftime("%A") if publish_time else None,
             "video_duration": self.duration,
             "video_view_count": self.view_count,
             "video_like_count": self.like_count,
@@ -120,7 +120,7 @@ class YouTubeVideo(Model):
             "channel_published_at": self.channel.published_at
         }
 
-    def updateStats(self, videoInfo):
+    def update_stats(self, videoInfo):
         statistics = videoInfo["statistics"]
         try:
             self.view_count = statistics["viewCount"]
@@ -142,10 +142,10 @@ class YouTubeVideo(Model):
         status = videoInfo["status"]
         self.status = status["privacyStatus"]
 
-        contentDetails = videoInfo["contentDetails"]
-        self.durationStr = contentDetails["duration"]
+        content_details = videoInfo["contentDetails"]
+        self.durationStr = content_details["duration"]
         self.duration = isodate.parse_duration(
-            contentDetails["duration"]).total_seconds()
+            content_details["duration"]).total_seconds()
 
         try:
             tags = videoInfo["snippet"]["tags"]

@@ -5,36 +5,38 @@ from channel_scraper import ChannelScraper
 from consts import CHANNEL_NAMES
 from db import YouTubeChannel
 from db.models import YouTubeVideo
-from elastic.elastic import update_video_captions, init as initElastic
-from youtube_api import init, searchChannels, updateChannelStats
+from elastic.elastic import update_video_captions, init as init_elastic
+from youtube_api import init, searchChannels, update_channel_stats
 
 load_dotenv()
 
-
 def scrape_channel_metadata(channel_names):
     youtube = init()
-    es = initElastic()
+    es_client = init_elastic()
 
     for query in channel_names:
         if YouTubeChannel \
             .select() \
-                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True).count() == 0:
+                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True).count() == 0:
             # Load channel info from YouTube API
-            channelList = searchChannels(youtube, query)
-            for channel in channelList:
+            channel_list = searchChannels(youtube, query)
+            for channel in channel_list:
                 try:
-                    YouTubeChannel.fromYouTubeAPI(channel["snippet"], query)
+                    YouTubeChannel.from_youtube_api(channel["snippet"], query)
                 except Exception as e:
                     print(e)
 
-        savedChannelList = list(YouTubeChannel
+        # Update channel stats
+        saved_channels = list(YouTubeChannel
                                 .select()
-                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant is True))
-        for channel in savedChannelList:
-            updateChannelStats(youtube, channel)
+                                .where(YouTubeChannel.search_query == query, YouTubeChannel.relevant == True))
+        print(f"Found {len(saved_channels)} channels for query {query}")
+        for channel in saved_channels:
+            print(f"Updating stats for channel {channel.title}")
+            update_channel_stats(youtube, channel)
             scraper = ChannelScraper(
                 youtube,
-                es,
+                es_client,
                 channel,
             )
             scraper.scrape()
@@ -42,7 +44,7 @@ def scrape_channel_metadata(channel_names):
 
 def scrape_channel_subtitles(channel_names, video_ids=None):
     driver = setup_driver()
-    es = initElastic()
+    es_client = init_elastic()
 
     for query in channel_names:
         channels = YouTubeChannel \
@@ -59,7 +61,7 @@ def scrape_channel_subtitles(channel_names, video_ids=None):
                 if 'msg' in captions:
                     print(captions['msg'])
                     continue
-                update_video_captions(es, video, captions)
+                update_video_captions(es_client, video, captions)
                 print(f"Updated captions for video {video.video_id}")
 
 
@@ -74,6 +76,7 @@ def main():
     channels = args.channel if args.channel else CHANNEL_NAMES
     video_ids = args.video if args.video else None
 
+    print(f"Running command {args.command} for {len(channels)} channels")
     if args.command == "fetch":
         scrape_channel_metadata(channels)
     elif args.command == "captions":

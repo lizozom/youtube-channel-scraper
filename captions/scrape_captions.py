@@ -3,10 +3,10 @@ import json
 import random
 import os
 import os.path
+
 from seleniumwire import webdriver
 from seleniumwire.utils import decode
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
@@ -14,10 +14,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-waittime = 15                                 # seconds browser waits before giving up
-sleeptime = [5,15]                            # random seconds range before loading next video id
-headless = False                              # select True if you want the browser window to be invisible (but not inaudible)
-mute = True                                   # select True if you want the browser window to be muted
+WAIT_TIME = 15                                # seconds browser waits before giving up
+SLEEP_TIME = [5, 15]                          # random seconds range before loading next video id
+HEADLESS = False                              # select True if you want the browser window to be invisible (but not inaudible)
+MUTE = True                                   # select True if you want the browser window to be muted
 adblock_path = os.environ.get("ADBLOCK_PATH")
 
 def process_captions(captions_str):
@@ -43,8 +43,8 @@ def get_transcript(driver, videoid):
     driver.get("https://www.youtube.com/watch?v=%s&vq=small" % videoid)
 
     try:
-        element = WebDriverWait(driver, waittime).until(EC.presence_of_element_located((By.CLASS_NAME, "ytp-subtitles-button")))
-    except:
+        element = WebDriverWait(driver, WAIT_TIME).until(EC.presence_of_element_located((By.CLASS_NAME, "ytp-subtitles-button")))
+    except Exception:
         return {
             "msg": 'could not find subtitles button'
         }
@@ -56,45 +56,44 @@ def get_transcript(driver, videoid):
 
     try:
         # Press if captions are disabled
-        if element.get_attribute("aria-pressed") == "false": 
+        if element.get_attribute("aria-pressed") == "false":
             element.click()
-    except:
+    except Exception:
         return {
             "msg": 'could not click'
         }
 
-    try: 
+    try:
         request = driver.wait_for_request('/timedtext', timeout=15)
-        captionsResp = request.response
-        if captionsResp:
+        captions_resp = request.response
+        if captions_resp:
             print("FOUND")
-            if captionsResp.status_code >= 200 and captionsResp.status_code < 300:
-                content = decode(captionsResp.body, captionsResp.headers.get('Content-Encoding', 'identity'))
+            if captions_resp.status_code >= 200 and captions_resp.status_code < 300:
+                content = decode(captions_resp.body, captions_resp.headers.get('Content-Encoding', 'identity'))
                 captions = json.dumps(json.loads(content), sort_keys=True, indent=4)
             else:
                 print("Returned with error")
-    except:
+    except Exception:
         return {
             "msg": 'no captions'
         }
 
     # cool down
-    sleep(random.uniform(sleeptime[0],sleeptime[1]))
+    sleep(random.uniform(SLEEP_TIME[0], SLEEP_TIME[1]))
     del driver.requests
 
     return process_captions(captions)
-    
+
 def setup_driver():
-    #create driver
+    # create driver
     options = Options()
     print(adblock_path)
     if adblock_path:
         options.add_argument('load-extension=' + adblock_path)
-    if mute:
+    if MUTE:
         options.add_argument("--mute-audio")
 
-
-    if headless:
+    if HEADLESS:
         options.add_argument("--headless")
 
     driver = webdriver.Chrome(options=options)
@@ -102,7 +101,7 @@ def setup_driver():
         '.*youtube.*',
     ]
 
-    #let adblock installation finish
+    # let adblock installation finish
     sleep(7)
 
     driver.switch_to.window(driver.window_handles[0])
@@ -110,7 +109,5 @@ def setup_driver():
 
 def scrape_video_captions(driver, video):
     video_id = video.video_id
-    print("Scraping captions for video: %s" % video_id)
+    print(f"Scraping captions for video: {video_id}")
     return get_transcript(driver, video_id)
-
-    

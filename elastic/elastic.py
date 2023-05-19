@@ -41,7 +41,7 @@ def bulk_index_videos(es, videos):
                     "_id": video.video_id,
                 }
             })
-            bulk_data.append(video.toElastic())
+            bulk_data.append(video.to_elastic())
 
         if len(bulk_data) == 200 or i == len(videos) - 1:
             res = es.bulk(index=ELASTIC_VIDEO_INDEX_NAME, operations=bulk_data)
