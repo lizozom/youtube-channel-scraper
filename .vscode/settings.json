@@ -25,7 +25,7 @@
     // "python.defaultInterpreterPath": "${env:VIRTUAL_ENV}",
     "python.defaultInterpreterPath": "env/bin/python",
     // "python.venvPath": "./env/bin/python",
-    "python.terminal.activateEnvironment": true,
+    // "python.terminal.activateEnvironment": true,
     "python.linting.pylintEnabled": true,
     "python.linting.flake8Enabled": false,
     "python.linting.enabled": true,
@@ -33,11 +33,11 @@
         "--init-hook",
         "import sys, os; sys.path.insert(0, os.path.join('.', 'env', 'lib', 'python3.8', 'site-packages'))",
         "--max-line-length=130",
-        "--disable=C0114,C0116,C0115,W0718,C0103"
-    ],
-    "python.linting.flake8Args": [
-        "--max-line-length=130",
-        "--ignore=E402,E302"
-    ],
+        "--disable=C0114,C0116,C0103"
+    ]
+    // "python.linting.flake8Args": [
+    //     "--max-line-length=130",
+    //     "--ignore=E402,E302"
+    // ],
 
 }
