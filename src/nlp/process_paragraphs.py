@@ -7,7 +7,8 @@ import numpy as np
 from src.nlp.utils import get_scores_folder, get_processed_caption_folder, CHANNEL
 
 API_URL = "https://us7916zbvnau0qxg.us-east-1.aws.endpoints.huggingface.cloud"
-HEADERS = {"Authorization": "Bearer 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"}
+BEARER = os.environ.get("HUGGINGFACE_API_KEY")
+HEADERS = {"Authorization": f"Bearer {BEARER}"}
 
 def query_huggingface(payload):
     response = requests.post(API_URL, headers=HEADERS, json=payload, timeout=30)

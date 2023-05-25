@@ -2,7 +2,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
 
 def get_transcript(videoid):
-    transcript = YouTubeTranscriptApi.get_transcript(videoid)
+    transcript = YouTubeTranscriptApi.get_transcript(videoid, languages=['en', 'en-US', 'en-GB'])
     formatter = TextFormatter()
     text = formatter.format_transcript(transcript).replace('\n', ' ')
     words = text.split(" ")

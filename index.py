@@ -57,7 +57,6 @@ def scrape_channel_subtitles(channel_names, video_ids=None):
             for video in videos:
                 print(video)
                 captions = scrape_video_captions(video)
-                print(captions)
                 if 'msg' in captions:
                     print(captions['msg'])
                     continue
