@@ -1,6 +1,7 @@
 import argparse
+
 from dotenv import load_dotenv
-from src.captions.scrape_captions import setup_driver, scrape_video_captions
+from src.captions.scrape_captions import scrape_video_captions
 from src.channel_scraper import ChannelScraper
 from src.consts import CHANNEL_NAMES
 from src.db import YouTubeChannel
@@ -43,7 +44,6 @@ def scrape_channel_metadata(channel_names):
 
 
 def scrape_channel_subtitles(channel_names, video_ids=None):
-    driver = setup_driver()
     es_client = init_elastic()
 
     for query in channel_names:
@@ -56,7 +56,7 @@ def scrape_channel_subtitles(channel_names, video_ids=None):
                 videos = videos.where(YouTubeVideo.video_id << video_ids)
             for video in videos:
                 print(video)
-                captions = scrape_video_captions(driver, video)
+                captions = scrape_video_captions(video)
                 print(captions)
                 if 'msg' in captions:
                     print(captions['msg'])
