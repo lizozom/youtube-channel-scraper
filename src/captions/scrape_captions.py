@@ -1,10 +1,5 @@
-import os
-import os.path
-from dotenv import load_dotenv
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
-
-load_dotenv()
 
 def get_transcript(videoid):
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
