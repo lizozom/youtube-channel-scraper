@@ -22,12 +22,8 @@
         "editor.defaultFormatter": "ms-python.autopep8"
     },
     "python.formatting.provider": "none",
-    // "python.defaultInterpreterPath": "${env:VIRTUAL_ENV}",
     "python.defaultInterpreterPath": "env/bin/python",
-    // "python.venvPath": "./env/bin/python",
-    // "python.terminal.activateEnvironment": true,
     "python.linting.pylintEnabled": true,
-    "python.linting.flake8Enabled": false,
     "python.linting.enabled": true,
     "python.linting.pylintArgs": [
         "--init-hook",
@@ -35,9 +31,5 @@
         "--max-line-length=130",
         "--disable=C0114,C0116,C0103"
     ]
-    // "python.linting.flake8Args": [
-    //     "--max-line-length=130",
-    //     "--ignore=E402,E302"
-    // ],
 
 }
